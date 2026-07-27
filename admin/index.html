@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard — LootLinks Admin</title>
+<link rel="stylesheet" href="../assets/css/style.css" />
+<link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body>
+<div class="bg-atmosphere"></div>
+<div class="admin-shell">
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Dashboard</h1>
+      <p>A quick look at how your page is performing.</p>
+    </div>
+
+    <div class="stat-grid" id="stat-grid"></div>
+
+    <div class="panel">
+      <h2>Top Products</h2>
+      <p class="panel-desc">Ranked by total clicks.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>Store</th><th>Clicks</th><th>Status</th></tr></thead>
+          <tbody id="top-products-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Quick Actions</h2>
+      <p class="panel-desc">Jump straight into common tasks.</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="add-product.html" class="btn btn-primary">+ Add Product</a>
+        <a href="products.html" class="btn btn-secondary">Manage Products</a>
+        <a href="../index.html" target="_blank" class="btn btn-secondary">View Live Site</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/db.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+  async function render() {
+    const [products, summary] = await Promise.all([DB.Products.getAll(), DB.Analytics.summary()]);
+    const active = products.filter((p) => p.active);
+
+    document.getElementById("stat-grid").innerHTML = `
+      <div class="stat-card"><div class="label">Total Products</div><div class="value">${products.length}</div></div>
+      <div class="stat-card"><div class="label">Active Products</div><div class="value">${active.length}</div></div>
+      <div class="stat-card"><div class="label">Total Clicks</div><div class="value">${summary.totalClicks}</div></div>
+      <div class="stat-card"><div class="label">Total Visitors</div><div class="value">${summary.totalVisitors}</div></div>
+      <div class="stat-card"><div class="label">Top Product</div><div class="value" style="font-size:16px">${
+        summary.topProduct ? summary.topProduct.title : "—"
+      }</div><div class="sub">${summary.topProduct ? summary.topProduct.clicks + " clicks" : "No clicks yet"}</div></div>
+    `;
+
+    const top = [...products].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 5);
+    document.getElementById("top-products-body").innerHTML = top.length
+      ? top
+          .map(
+            (p) => `<tr>
+        <td style="display:flex;align-items:center;gap:10px"><img class="thumb" src="${p.image}" alt=""/>${p.title}</td>
+        <td>${p.store}</td>
+        <td>${p.clicks || 0}</td>
+        <td><span class="status-pill ${p.active ? "status-active" : "status-inactive"}">${p.active ? "Active" : "Inactive"}</span></td>
+      </tr>`
+          )
+          .join("")
+      : `<tr class="empty-row"><td colspan="4">No products yet.</td></tr>`;
+  }
+  render();
+</script>
+</body>
+</html>

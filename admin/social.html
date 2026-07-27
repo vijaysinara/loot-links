@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Social Links — LootLinks Admin</title>
+<link rel="stylesheet" href="../assets/css/style.css" />
+<link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body>
+<div class="bg-atmosphere"></div>
+<div class="admin-shell">
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>Social Links</h1>
+      <p>Add the platforms you're active on. Toggle any icon off to hide it without deleting it.</p>
+    </div>
+
+    <div class="panel" style="max-width:640px">
+      <h2>Add a Platform</h2>
+      <div class="form-grid-2">
+        <div class="form-row">
+          <label for="platform">Platform</label>
+          <select id="platform">
+            <option value="instagram">Instagram</option>
+            <option value="youtube">YouTube</option>
+            <option value="facebook">Facebook</option>
+            <option value="telegram">Telegram</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="x">X / Twitter</option>
+            <option value="website">Website</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="url">URL</label>
+          <input type="url" id="url" placeholder="https://..." />
+        </div>
+      </div>
+      <button class="btn btn-primary" id="add-btn">+ Add Link</button>
+    </div>
+
+    <div class="panel">
+      <h2>Your Links</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Platform</th><th>URL</th><th>Visible</th><th>Actions</th></tr></thead>
+          <tbody id="social-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../assets/js/db.js"></script>
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+  async function render() {
+    const list = await DB.Social.getAll();
+    document.getElementById("social-body").innerHTML = list.length
+      ? list
+          .map(
+            (s) => `
+        <tr data-id="${s.id}">
+          <td style="display:flex;align-items:center;gap:8px">
+            <span style="width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;color:var(--gold)">${getIcon(
+              s.platform
+            )}</span>
+            ${PLATFORM_LABEL[s.platform] || s.platform}
+          </td>
+          <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-dim)">${s.url}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" class="toggle-input" ${s.enabled ? "checked" : ""}/>
+              <span class="track"></span>
+            </label>
+          </td>
+          <td class="row-actions">
+            <button class="btn btn-secondary btn-sm edit-btn">Edit</button>
+            <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+          </td>
+        </tr>`
+          )
+          .join("")
+      : `<tr class="empty-row"><td colspan="4">No social links yet — add one above.</td></tr>`;
+
+    document.querySelectorAll(".toggle-input").forEach((el) =>
+      el.addEventListener("change", async (e) => {
+        const id = e.target.closest("tr").dataset.id;
+        await DB.Social.toggle(id);
+        Admin.toast("Visibility updated");
+      })
+    );
+    document.querySelectorAll(".delete-btn").forEach((el) =>
+      el.addEventListener("click", async (e) => {
+        const id = e.target.closest("tr").dataset.id;
+        if (confirm("Remove this social link?")) {
+          await DB.Social.remove(id);
+          Admin.toast("Link removed");
+          render();
+        }
+      })
+    );
+    document.querySelectorAll(".edit-btn").forEach((el) =>
+      el.addEventListener("click", async (e) => {
+        const row = e.target.closest("tr");
+        const id = row.dataset.id;
+        const all = await DB.Social.getAll();
+        const current = all.find((s) => s.id === id);
+        const newUrl = prompt("Update URL for " + (PLATFORM_LABEL[current.platform] || current.platform), current.url);
+        if (newUrl) {
+          await DB.Social.update(id, { url: newUrl.trim() });
+          Admin.toast("Link updated");
+          render();
+        }
+      })
+    );
+  }
+
+  document.getElementById("add-btn").addEventListener("click", async () => {
+    const platform = document.getElementById("platform").value;
+    const url = document.getElementById("url").value.trim();
+    if (!url) return Admin.toast("Please enter a URL", "error");
+    await DB.Social.add(platform, url);
+    document.getElementById("url").value = "";
+    Admin.toast("Social link added");
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Login — LootLinks</title>
+<link rel="stylesheet" href="../assets/css/style.css" />
+<link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body>
+<div class="bg-atmosphere"></div>
+<div class="login-shell">
+  <form class="login-card" id="login-form">
+    <div class="dot"></div>
+    <h1>Admin Login</h1>
+    <p class="sub">Sign in to manage your LootLinks page</p>
+
+    <div class="form-row">
+      <label for="username">Username</label>
+      <input type="text" id="username" autocomplete="username" required />
+    </div>
+    <div class="form-row">
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Log In</button>
+    <p class="login-error" id="login-error"></p>
+    <p class="login-demo-note">Use the username &amp; password you set in Vercel → Settings → Environment Variables (<code>ADMIN_USERNAME</code> / <code>ADMIN_PASSWORD</code>).</p>
+  </form>
+</div>
+
+<script src="../assets/js/db.js"></script>
+<script>
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value;
+    const errEl = document.getElementById("login-error");
+    const ok = await DB.Auth.login(u, p);
+    if (ok) {
+      window.location.href = "index.html";
+    } else {
+      errEl.textContent = "Incorrect username or password.";
+    }
+  });
+  // already logged in? skip straight to dashboard
+  DB.Auth.isLoggedIn().then((ok) => {
+    if (ok) window.location.href = "index.html";
+  });
+</script>
+</body>
+</html>
