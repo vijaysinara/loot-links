@@ -1,0 +1,9 @@
+{
+  "name": "loot-links",
+  "version": "2.0.0",
+  "private": true,
+  "description": "LootLinks affiliate link-in-bio site with a Neon Postgres backend on Vercel.",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.0"
+  }
+}
