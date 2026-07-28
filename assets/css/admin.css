@@ -1,0 +1,173 @@
+/* Admin dashboard — built on the same tokens as style.css */
+.admin-shell { display: flex; min-height: 100vh; }
+
+/* ---------- sidebar ---------- */
+.admin-sidebar {
+  width: 236px;
+  flex-shrink: 0;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--card-border);
+  padding: 22px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.admin-brand { display: flex; align-items: center; gap: 10px; padding: 6px 10px 22px; }
+.admin-brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+.admin-brand span { font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+
+.admin-nav { display: flex; flex-direction: column; gap: 2px; }
+.admin-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.admin-nav a svg { width: 16px; height: 16px; }
+.admin-nav a:hover { background: #1d1d20; color: var(--text); }
+.admin-nav a.active { background: var(--gold-soft); color: var(--gold); }
+.admin-nav .nav-divider { height: 1px; background: var(--card-border); margin: 10px 6px; }
+.admin-nav .logout { color: var(--danger); margin-top: 4px; }
+
+/* mobile topbar */
+.admin-topbar { display: none; }
+@media (max-width: 860px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar { display: none; position: fixed; z-index: 40; width: 240px; top: 0; left: 0; box-shadow: 20px 0 40px rgba(0,0,0,0.5); }
+  .admin-sidebar.open { display: block; }
+  .admin-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--card-border);
+    background: var(--bg-elevated); position: sticky; top: 0; z-index: 30;
+  }
+  .admin-topbar button { background: none; border: 1px solid var(--card-border); color: var(--text); border-radius: 8px; padding: 8px 10px; }
+}
+
+/* ---------- main content ---------- */
+.admin-main { flex: 1; padding: 28px 30px 60px; max-width: 1180px; }
+@media (max-width: 640px) { .admin-main { padding: 18px 16px 50px; } }
+
+.admin-header { margin-bottom: 26px; }
+.admin-header h1 { font-family: var(--font-display); font-size: 24px; margin: 0 0 4px; font-weight: 600; }
+.admin-header p { color: var(--text-dim); font-size: 13.5px; margin: 0; }
+
+/* ---------- stat cards ---------- */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 18px 20px; }
+.stat-card .label { font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+.stat-card .value { font-family: var(--font-display); font-size: 28px; font-weight: 600; }
+.stat-card .sub { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+/* ---------- generic panel/card ---------- */
+.panel { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 22px; margin-bottom: 20px; }
+.panel h2 { font-size: 15.5px; margin: 0 0 4px; font-weight: 600; }
+.panel .panel-desc { font-size: 12.5px; color: var(--text-dim); margin: 0 0 18px; }
+
+/* ---------- form elements ---------- */
+.form-row { margin-bottom: 16px; }
+.form-row label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; }
+.form-row .hint { font-size: 11.5px; color: var(--text-faint); margin-top: 5px; }
+/* .switch is also a <label>, so it needs to win over the ".form-row label"
+   rule above (same specificity — source order was breaking its layout) */
+.form-row label.switch {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0;
+}
+input[type="text"], input[type="url"], input[type="password"], textarea, select {
+  width: 100%;
+  background: #0e0e10;
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus { border-color: var(--gold); outline: none; }
+textarea { resize: vertical; min-height: 80px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 560px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+.switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.switch input { display: none; }
+.switch .track {
+  width: 38px;
+  height: 22px;
+  border-radius: 20px;
+  background: var(--danger); /* off = red */
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+.switch input:checked + .track { background: var(--success); } /* on = green */
+.switch input:checked + .track::after { transform: translateX(16px); }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; gap: 7px; border: none; border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; font-weight: 600; transition: filter 0.15s, transform 0.15s; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--gold); color: #191509; }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-secondary { background: #202023; color: var(--text); border: 1px solid var(--card-border); }
+.btn-secondary:hover { background: #26262a; }
+.btn-danger { background: #2a1614; color: #f2a29c; border: 1px solid #4a2320; }
+.btn-danger:hover { background: #331917; }
+.btn-icon { padding: 8px; }
+.btn-sm { padding: 6px 10px; font-size: 12px; }
+.btn svg { width: 14px; height: 14px; }
+
+/* ---------- table ---------- */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 720px; }
+th { text-align: left; color: var(--text-faint); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
+td { padding: 12px; border-bottom: 1px solid #1f1f22; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+.thumb { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: #0e0e10; }
+.status-pill { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; display: inline-block; }
+.status-active { background: #10261a; color: var(--success); }
+.status-inactive { background: #2a1a17; color: var(--text-faint); }
+.row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* image upload preview */
+.upload-box {
+  border: 1.5px dashed var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  position: relative;
+}
+.upload-box:hover { border-color: var(--gold); }
+.upload-box img { max-height: 140px; margin: 0 auto 10px; border-radius: 10px; }
+.upload-box input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-box .upload-label { font-size: 12.5px; color: var(--text-dim); }
+
+/* toast */
+.toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--card); border: 1px solid var(--card-border); color: var(--text); padding: 12px 18px; border-radius: var(--radius-sm); font-size: 13px; opacity: 0; pointer-events: none; transition: all 0.25s var(--ease); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: #2b4a37; }
+.toast.error { border-color: #4a2320; }
+
+/* login page */
+.login-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-card { width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 34px 28px; box-shadow: var(--shadow-card); }
+.login-card .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); margin: 0 auto 14px; }
+.login-card h1 { font-family: var(--font-display); text-align: center; font-size: 22px; margin: 0 0 6px; }
+.login-card p.sub { text-align: center; color: var(--text-dim); font-size: 13px; margin: 0 0 26px; }
+.login-card .btn-primary { width: 100%; justify-content: center; margin-top: 6px; }
+.login-error { color: var(--danger); font-size: 12.5px; margin-top: 10px; text-align: center; min-height: 16px; }
+.login-demo-note { text-align: center; font-size: 11.5px; color: var(--text-faint); margin-top: 18px; }
+
+.empty-row td { text-align: center; color: var(--text-faint); padding: 30px; }
